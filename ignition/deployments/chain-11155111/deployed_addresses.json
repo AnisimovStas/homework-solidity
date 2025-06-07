@@ -1,0 +1,6 @@
+{
+  "CounterModule#Counter": "0x88425d61a067f5277a7C64222e4b4aE5465f99CF",
+  "VaultModule#Vault": "0xA66E127395E16A1788fD766a0221d76b8206DBcF",
+  "AttackerModule#Attacker": "0x82C3e7bA88347793CCeEa3D40dBcD36aDe9A43FC",
+  "AttackerV2Module#Attacker": "0x62F5a7F289f9460bc9357Be6eA46278b5b2abc26"
+}
