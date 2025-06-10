@@ -32,8 +32,10 @@ contract Vault is Ownable {
         );
 
         uint256 refundAmount = donates[msg.sender];
+
+        // payable(msg.sender).transfer(refundAmount);
+        payable(msg.sender).call{value: refundAmount}("");
         donates[msg.sender] = 0;
-        payable(msg.sender).transfer(refundAmount);
     }
 
     function withdraw() external onlyOwner {

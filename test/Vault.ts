@@ -14,6 +14,14 @@ describe("Vault", () => {
 
         return { vault, owner, user };
     }
+    async function deployAttackContractFixture() {
+        const [owner, user] = await hre.ethers.getSigners();
+
+        const Attacker = await hre.ethers.getContractFactory("Attacker");
+        const attacker = await Attacker.deploy(owner);
+
+        return { attacker, owner, user };
+    }
 
     describe("Deployment", () => {
     });
@@ -110,5 +118,19 @@ describe("Vault", () => {
         const donated = await vault.getAddressBalance(user.address);
 
         expect(donated).to.equal(hre.ethers.parseEther("1.0"));
+    });
+
+    it.only("attack", async () => {
+        const { vault, user } = await loadFixture(deployVaultContractFixture);
+
+        const Attacker = await hre.ethers.getContractFactory("Attacker");
+        const attacker = await Attacker.deploy(vault.target);
+        await vault.connect(user).donate({ value: hre.ethers.parseEther("3.0") });
+
+        await attacker.attack({ value: hre.ethers.parseEther("1.0") });
+
+        const attackerBalance = await hre.ethers.provider.getBalance(attacker.target);
+
+        expect(attackerBalance).equal(hre.ethers.parseEther("4.0"))
     });
 })
