@@ -120,7 +120,7 @@ describe("Vault", () => {
         expect(donated).to.equal(hre.ethers.parseEther("1.0"));
     });
 
-    it.only("attack", async () => {
+    it("attack", async () => {
         const { vault, user } = await loadFixture(deployVaultContractFixture);
 
         const Attacker = await hre.ethers.getContractFactory("Attacker");
