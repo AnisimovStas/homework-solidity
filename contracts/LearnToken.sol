@@ -15,8 +15,7 @@ contract LearnToken is Ownable, ERC20 {
         address[] memory stakeholders
     ) Ownable(initialOwner) ERC20(name, symbol) {
         require(
-            stakeholders.length * initialSupply * 10 ** decimals() <=
-                totalSupplyLimit(),
+            stakeholders.length * initialSupply * 1 ether <= totalSupplyLimit(),
             totalSupplyLimitOverDraft()
         );
 
@@ -35,6 +34,6 @@ contract LearnToken is Ownable, ERC20 {
     }
 
     function totalSupplyLimit() public view returns (uint256) {
-        return 1_000_000 * 10 ** decimals();
+        return 1_000_000 * 1 ether;
     }
 }

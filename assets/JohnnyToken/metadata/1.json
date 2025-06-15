@@ -1,0 +1,19 @@
+{
+    "name": "Pixel Dog #1",
+    "description": "A pixel art Chihuahua chilling in a box with a rubber duck.",
+    "image": "https://brown-accepted-mastodon-617.mypinata.cloud/ipfs/bafybeia5ftrpoqpp4oaylm5z6vrk2yu7offko3gknfr3m3shlgvhicgohu/1.png",
+    "attributes": [
+        {
+            "trait_type": "Companion",
+            "value": "Rubber Duck"
+        },
+        {
+            "trait_type": "Location",
+            "value": "Box"
+        },
+        {
+            "trait_type": "Style",
+            "value": "Pixel Art"
+        }
+    ]
+}
