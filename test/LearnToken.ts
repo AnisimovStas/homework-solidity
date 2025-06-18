@@ -4,7 +4,7 @@ import { expect } from "chai";
 import { getAccountBalance, setAccountBalance } from "./utils";
 
 
-describe.only("LearnToken", () => {
+describe("LearnToken", () => {
 
     async function deployLearnTokenContractFixture(stakeholdersCount: number) {
         let accounts = await hre.ethers.getSigners();;
