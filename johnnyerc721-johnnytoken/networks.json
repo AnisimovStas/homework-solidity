@@ -1,0 +1,8 @@
+{
+  "sepolia": {
+    "JohnnyToken": {
+      "address": "0xbF0B50051Be8374Ee5aFa39DEE1B69E908f884b8",
+      "startBlock": 8548606
+    }
+  }
+}
