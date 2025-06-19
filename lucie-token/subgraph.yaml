@@ -5,12 +5,12 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
-    name: JohnnyToken
+    name: LucieToken
     network: sepolia
     source:
-      address: "0xbF0B50051Be8374Ee5aFa39DEE1B69E908f884b8"
-      abi: JohnnyToken
-      startBlock: 8548606
+      address: "0xE2fCd9cef7e8107637F3e08Fc943f6d863e4Ee88"
+      abi: LucieToken
+      startBlock: 8585294
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.9
@@ -21,10 +21,13 @@ dataSources:
         - BatchMetadataUpdate
         - MetadataUpdate
         - OwnershipTransferred
+        - SellOfferPlaced
+        - TokenBuyed
+        - TokenMinted
         - Transfer
       abis:
-        - name: JohnnyToken
-          file: ./abis/JohnnyToken.json
+        - name: LucieToken
+          file: ./abis/LucieToken.json
       eventHandlers:
         - event: Approval(indexed address,indexed address,indexed uint256)
           handler: handleApproval
@@ -36,6 +39,12 @@ dataSources:
           handler: handleMetadataUpdate
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
+        - event: SellOfferPlaced(address,indexed uint256,uint256,uint256,string)
+          handler: handleSellOfferPlaced
+        - event: TokenBuyed(address,address,indexed uint256,uint256,uint256,string)
+          handler: handleTokenBuyed
+        - event: TokenMinted(address,indexed uint256,uint256,uint256,string)
+          handler: handleTokenMinted
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
-      file: ./src/johnny-token.ts
+      file: ./src/lucie-token.ts

@@ -6,8 +6,11 @@ import {
   BatchMetadataUpdate,
   MetadataUpdate,
   OwnershipTransferred,
+  SellOfferPlaced,
+  TokenBuyed,
+  TokenMinted,
   Transfer
-} from "../generated/JohnnyToken/JohnnyToken"
+} from "../generated/LucieToken/LucieToken"
 
 export function createApprovalEvent(
   owner: Address,
@@ -115,6 +118,118 @@ export function createOwnershipTransferredEvent(
   )
 
   return ownershipTransferredEvent
+}
+
+export function createSellOfferPlacedEvent(
+  owner: Address,
+  tokenId: BigInt,
+  price: BigInt,
+  timestamp: BigInt,
+  tokenURI: string
+): SellOfferPlaced {
+  let sellOfferPlacedEvent = changetype<SellOfferPlaced>(newMockEvent())
+
+  sellOfferPlacedEvent.parameters = new Array()
+
+  sellOfferPlacedEvent.parameters.push(
+    new ethereum.EventParam("owner", ethereum.Value.fromAddress(owner))
+  )
+  sellOfferPlacedEvent.parameters.push(
+    new ethereum.EventParam(
+      "tokenId",
+      ethereum.Value.fromUnsignedBigInt(tokenId)
+    )
+  )
+  sellOfferPlacedEvent.parameters.push(
+    new ethereum.EventParam("price", ethereum.Value.fromUnsignedBigInt(price))
+  )
+  sellOfferPlacedEvent.parameters.push(
+    new ethereum.EventParam(
+      "timestamp",
+      ethereum.Value.fromUnsignedBigInt(timestamp)
+    )
+  )
+  sellOfferPlacedEvent.parameters.push(
+    new ethereum.EventParam("tokenURI", ethereum.Value.fromString(tokenURI))
+  )
+
+  return sellOfferPlacedEvent
+}
+
+export function createTokenBuyedEvent(
+  from: Address,
+  to: Address,
+  tokenId: BigInt,
+  price: BigInt,
+  timestamp: BigInt,
+  tokenURI: string
+): TokenBuyed {
+  let tokenBuyedEvent = changetype<TokenBuyed>(newMockEvent())
+
+  tokenBuyedEvent.parameters = new Array()
+
+  tokenBuyedEvent.parameters.push(
+    new ethereum.EventParam("from", ethereum.Value.fromAddress(from))
+  )
+  tokenBuyedEvent.parameters.push(
+    new ethereum.EventParam("to", ethereum.Value.fromAddress(to))
+  )
+  tokenBuyedEvent.parameters.push(
+    new ethereum.EventParam(
+      "tokenId",
+      ethereum.Value.fromUnsignedBigInt(tokenId)
+    )
+  )
+  tokenBuyedEvent.parameters.push(
+    new ethereum.EventParam("price", ethereum.Value.fromUnsignedBigInt(price))
+  )
+  tokenBuyedEvent.parameters.push(
+    new ethereum.EventParam(
+      "timestamp",
+      ethereum.Value.fromUnsignedBigInt(timestamp)
+    )
+  )
+  tokenBuyedEvent.parameters.push(
+    new ethereum.EventParam("tokenURI", ethereum.Value.fromString(tokenURI))
+  )
+
+  return tokenBuyedEvent
+}
+
+export function createTokenMintedEvent(
+  to: Address,
+  tokenId: BigInt,
+  price: BigInt,
+  timestamp: BigInt,
+  tokenURI: string
+): TokenMinted {
+  let tokenMintedEvent = changetype<TokenMinted>(newMockEvent())
+
+  tokenMintedEvent.parameters = new Array()
+
+  tokenMintedEvent.parameters.push(
+    new ethereum.EventParam("to", ethereum.Value.fromAddress(to))
+  )
+  tokenMintedEvent.parameters.push(
+    new ethereum.EventParam(
+      "tokenId",
+      ethereum.Value.fromUnsignedBigInt(tokenId)
+    )
+  )
+  tokenMintedEvent.parameters.push(
+    new ethereum.EventParam("price", ethereum.Value.fromUnsignedBigInt(price))
+  )
+  tokenMintedEvent.parameters.push(
+    new ethereum.EventParam(
+      "timestamp",
+      ethereum.Value.fromUnsignedBigInt(timestamp)
+    )
+  )
+  tokenMintedEvent.parameters.push(
+    new ethereum.EventParam("tokenURI", ethereum.Value.fromString(tokenURI))
+  )
+
+  return tokenMintedEvent
 }
 
 export function createTransferEvent(

@@ -8,9 +8,9 @@ import {
 } from "matchstick-as/assembly/index"
 import { Address, BigInt } from "@graphprotocol/graph-ts"
 import { Approval } from "../generated/schema"
-import { Approval as ApprovalEvent } from "../generated/JohnnyToken/JohnnyToken"
-import { handleApproval } from "../src/johnny-token"
-import { createApprovalEvent } from "./johnny-token-utils"
+import { Approval as ApprovalEvent } from "../generated/LucieToken/LucieToken"
+import { handleApproval } from "../src/lucie-token"
+import { createApprovalEvent } from "./lucie-token-utils"
 
 // Tests structure (matchstick-as >=0.5.0)
 // https://thegraph.com/docs/en/subgraphs/developing/creating/unit-testing-framework/#tests-structure

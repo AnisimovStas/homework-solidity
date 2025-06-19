@@ -6,6 +6,7 @@
     ],
     "stateMutability": "nonpayable"
   },
+  { "name": "AlreadySelling", "type": "error", "inputs": [] },
   {
     "name": "ERC721IncorrectOwner",
     "type": "error",
@@ -67,6 +68,7 @@
   },
   { "name": "FailedWithdraw", "type": "error", "inputs": [] },
   { "name": "NotEnoughFunds", "type": "error", "inputs": [] },
+  { "name": "NotNFTOwner", "type": "error", "inputs": [] },
   {
     "name": "OwnableInvalidOwner",
     "type": "error",
@@ -81,6 +83,7 @@
       { "name": "account", "type": "address", "internalType": "address" }
     ]
   },
+  { "name": "TokenNotOnSell", "type": "error", "inputs": [] },
   {
     "name": "Approval",
     "type": "event",
@@ -183,6 +186,123 @@
     "anonymous": false
   },
   {
+    "name": "SellOfferPlaced",
+    "type": "event",
+    "inputs": [
+      {
+        "name": "owner",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "price",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "timestamp",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "tokenURI",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "name": "TokenBuyed",
+    "type": "event",
+    "inputs": [
+      {
+        "name": "from",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "to",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "price",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "timestamp",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "tokenURI",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "name": "TokenMinted",
+    "type": "event",
+    "inputs": [
+      {
+        "name": "to",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "price",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "timestamp",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "tokenURI",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      }
+    ],
+    "anonymous": false
+  },
+  {
     "name": "Transfer",
     "type": "event",
     "inputs": [
@@ -225,6 +345,15 @@
     ],
     "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
     "stateMutability": "view"
+  },
+  {
+    "name": "buyFromOffer",
+    "type": "function",
+    "inputs": [
+      { "name": "tokenId", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [],
+    "stateMutability": "payable"
   },
   {
     "name": "changeMintPrice",
@@ -285,6 +414,16 @@
     "stateMutability": "view"
   },
   {
+    "name": "placeSellOffer",
+    "type": "function",
+    "inputs": [
+      { "name": "tokenId", "type": "uint256", "internalType": "uint256" },
+      { "name": "price", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
     "name": "renounceOwnership",
     "type": "function",
     "inputs": [],
@@ -324,6 +463,17 @@
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
+  },
+  {
+    "name": "sellOfferBook",
+    "type": "function",
+    "inputs": [
+      { "name": "tokenId", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [
+      { "name": "price", "type": "uint256", "internalType": "uint256" }
+    ],
+    "stateMutability": "view"
   },
   {
     "name": "setApprovalForAll",

@@ -4,14 +4,20 @@ import {
   BatchMetadataUpdate as BatchMetadataUpdateEvent,
   MetadataUpdate as MetadataUpdateEvent,
   OwnershipTransferred as OwnershipTransferredEvent,
+  SellOfferPlaced as SellOfferPlacedEvent,
+  TokenBuyed as TokenBuyedEvent,
+  TokenMinted as TokenMintedEvent,
   Transfer as TransferEvent
-} from "../generated/JohnnyToken/JohnnyToken"
+} from "../generated/LucieToken/LucieToken"
 import {
   Approval,
   ApprovalForAll,
   BatchMetadataUpdate,
   MetadataUpdate,
   OwnershipTransferred,
+  SellOfferPlaced,
+  TokenBuyed,
+  TokenMinted,
   Transfer
 } from "../generated/schema"
 
@@ -82,6 +88,58 @@ export function handleOwnershipTransferred(
   )
   entity.previousOwner = event.params.previousOwner
   entity.newOwner = event.params.newOwner
+
+  entity.blockNumber = event.block.number
+  entity.blockTimestamp = event.block.timestamp
+  entity.transactionHash = event.transaction.hash
+
+  entity.save()
+}
+
+export function handleSellOfferPlaced(event: SellOfferPlacedEvent): void {
+  let entity = new SellOfferPlaced(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  )
+  entity.owner = event.params.owner
+  entity.tokenId = event.params.tokenId
+  entity.price = event.params.price
+  entity.timestamp = event.params.timestamp
+  entity.tokenURI = event.params.tokenURI
+
+  entity.blockNumber = event.block.number
+  entity.blockTimestamp = event.block.timestamp
+  entity.transactionHash = event.transaction.hash
+
+  entity.save()
+}
+
+export function handleTokenBuyed(event: TokenBuyedEvent): void {
+  let entity = new TokenBuyed(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  )
+  entity.from = event.params.from
+  entity.to = event.params.to
+  entity.tokenId = event.params.tokenId
+  entity.price = event.params.price
+  entity.timestamp = event.params.timestamp
+  entity.tokenURI = event.params.tokenURI
+
+  entity.blockNumber = event.block.number
+  entity.blockTimestamp = event.block.timestamp
+  entity.transactionHash = event.transaction.hash
+
+  entity.save()
+}
+
+export function handleTokenMinted(event: TokenMintedEvent): void {
+  let entity = new TokenMinted(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  )
+  entity.to = event.params.to
+  entity.tokenId = event.params.tokenId
+  entity.price = event.params.price
+  entity.timestamp = event.params.timestamp
+  entity.tokenURI = event.params.tokenURI
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
