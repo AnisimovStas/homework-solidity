@@ -1,3 +1,4 @@
+import { Address } from "@graphprotocol/graph-ts"
 import {
   Approval as ApprovalEvent,
   ApprovalForAll as ApprovalForAllEvent,
@@ -18,8 +19,10 @@ import {
   SellOfferPlaced,
   TokenBuyed,
   TokenMinted,
-  Transfer
+  Transfer,
+  BuyToken
 } from "../generated/schema"
+let ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export function handleApproval(event: ApprovalEvent): void {
   let entity = new Approval(
@@ -129,9 +132,28 @@ export function handleTokenBuyed(event: TokenBuyedEvent): void {
   entity.transactionHash = event.transaction.hash
 
   entity.save()
+
+  let entityId = event.transaction.hash.toHex() + '-' + event.logIndex.toString();
+
+  let buyNftEntity = new BuyToken(
+    entityId
+  )
+
+  buyNftEntity.buyer = event.params.to;
+  buyNftEntity.seller = Address.fromString(ZERO_ADDRESS);
+  buyNftEntity.tokenId = event.params.tokenId;
+  buyNftEntity.timestamp = event.params.timestamp;
+  buyNftEntity.tokenURI = event.params.tokenURI
+  buyNftEntity.price = event.params.price;
+  buyNftEntity.txType = "Purchase"
+
+
+  buyNftEntity.save();
 }
 
 export function handleTokenMinted(event: TokenMintedEvent): void {
+  let entityId = event.transaction.hash.toHex() + '-' + event.logIndex.toString();
+
   let entity = new TokenMinted(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
@@ -146,6 +168,20 @@ export function handleTokenMinted(event: TokenMintedEvent): void {
   entity.transactionHash = event.transaction.hash
 
   entity.save()
+
+  let buyNftEntity = new BuyToken(
+    entityId
+  )
+
+  buyNftEntity.buyer = event.params.to;
+  buyNftEntity.seller = Address.fromString(ZERO_ADDRESS);
+  buyNftEntity.tokenId = event.params.tokenId;
+  buyNftEntity.timestamp = event.params.timestamp;
+  buyNftEntity.tokenURI = event.params.tokenURI;
+  buyNftEntity.price = event.params.price;
+  buyNftEntity.txType = "Mint"
+
+  buyNftEntity.save();
 }
 
 export function handleTransfer(event: TransferEvent): void {

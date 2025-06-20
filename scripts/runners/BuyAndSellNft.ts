@@ -1,5 +1,5 @@
 import hre, { ethers } from "hardhat";
-
+import { generateRandomPrice, waitForNextBlock } from "../../test/utils";
 async function main() {
     const contractAddress = "0xE2fCd9cef7e8107637F3e08Fc943f6d863e4Ee88"
     const account1 = process.env.OWNER_ADDRESS_ETH_NETWORK as string;
@@ -9,39 +9,35 @@ async function main() {
 
     const token = await hre.ethers.getContractAt("LucieToken", contractAddress);
 
-    await token.connect(signer1).placeSellOffer(1n, ethers.parseEther("0.02"));
-    console.log("sell offer placed");
+    // const currentOwners = [{ tokenId: 2, seller: signer2, buyer: signer1, price: ethers.parseEther("0.03") }]
 
-    const isTokenId1OnSale = await token.connect(signer1).sellOfferBook(1n);
-    console.log(`token1 price: ${isTokenId1OnSale}`);
 
-    await token.connect(signer1).setApprovalForAll(contractAddress, true);
-    console.log("approved");
+    // await currentOwners.forEach(async (run) => {
+    for (let i = 1; i < 4; i++) {
+        const tokenId = i;
+        const sellerAdr = await token.ownerOf(tokenId);
+        const seller = await hre.ethers.getSigner(sellerAdr);
+        const buyerAdr = sellerAdr == account1 ? account2 : account1;
 
-    try {
-        await token.connect(signer2).buyFromOffer(1n, { value: ethers.parseEther("0.03") });
-    } catch (error: any) {
-        console.error("Transaction failed: ", error);
-        if (error?.error?.message) {
-            console.error("Revert reason: ", error.error.message);
-        }
+        const buyer = await hre.ethers.getSigner(buyerAdr);
+        const price = ethers.parseEther(generateRandomPrice());
+
+
+        console.log(`🚀 Start selling process:Token ID: ${tokenId}Seller Address: ${sellerAdr} Buyer Address: ${buyerAdr} Price: ${price} ETH`);
+        await token.connect(seller).placeSellOffer(tokenId, price);
+        console.log(`✅ Sell offer placed: Token ID: ${tokenId} Price: ${price} ETH Seller: ${sellerAdr}`);
+
+        await token.connect(seller).approve(buyer, tokenId);
+        console.log(`✅ Approval granted Seller: ${sellerAdr} Buyer: ${buyerAdr} Token ID: ${tokenId}`);
+
+        console.log("⏳ Waiting for the next block...");
+        await waitForNextBlock()
+        await waitForNextBlock()
+        console.log("🆕 New block mined, proceeding to purchase...");
+        await token.connect(buyer).buyFromOffer(tokenId, { value: price });
+        console.log(`🎉 NFT transferred: Token ID: ${tokenId} From: ${sellerAdr} To: ${buyerAdr} Price Paid: ${price} ETH`);
+
     }
-    // await token.connect(signer1).placeSellOffer(1n, ethers.parseEther("0.02"));
-    // await token.connect(signer2).buyFromOffer(1n, { value: ethers.parseEther("0.02") });
-    // await token.connect(signer2).placeSellOffer(1n, ethers.parseEther("0.02"));
-    // await token.connect(signer1).buyFromOffer(1n, { value: ethers.parseEther("0.02") });
-
-    // await token.connect(signer1).placeSellOffer(2n, ethers.parseEther("0.02"));
-    // await token.connect(signer2).buyFromOffer(2n, { value: ethers.parseEther("0.03") });
-
-    // await token.connect(signer1).placeSellOffer(3n, ethers.parseEther("0.02"));
-    // await token.connect(signer2).buyFromOffer(3n, { value: ethers.parseEther("0.03") });
-
-    // await token.connect(signer1).placeSellOffer(4n, ethers.parseEther("0.02"));
-    // await token.connect(signer2).buyFromOffer(4n, { value: ethers.parseEther("0.03") });
-
-    // await token.connect(signer1).placeSellOffer(4n, ethers.parseEther("0.02"));
-    // await token.connect(signer2).buyFromOffer(4n, { value: ethers.parseEther("0.03") });
 
 }
 

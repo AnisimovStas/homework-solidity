@@ -69,6 +69,18 @@ type TokenBuyed @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
+type BuyToken @entity(immutable: true) {
+  id: ID!               
+  tokenId: BigInt!       # ID токена
+  seller: Bytes
+  buyer: Bytes           # Адрес покупателя
+  timestamp: BigInt       # Время события Buy
+  price: BigInt          # Цена покупки
+  tokenURI: String
+  txType: String
+}
+
+
 type TokenMinted @entity(immutable: true) {
   id: Bytes!
   to: Bytes! # address

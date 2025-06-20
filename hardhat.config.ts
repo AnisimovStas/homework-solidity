@@ -17,7 +17,7 @@ const config: HardhatUserConfig = {
     networks: {
         Sepolia: {
             url: process.env.SEPOLIA_URL || "",
-            accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+            accounts: [process.env.PRIVATE_KEY as string, process.env.EVE_PRIVATE_KEY as string],
         },
         SepoliaAsEve: {
             url: process.env.SEPOLIA_URL || "",
