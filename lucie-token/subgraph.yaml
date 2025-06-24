@@ -1,0 +1,50 @@
+specVersion: 1.3.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: LucieToken
+    network: sepolia
+    source:
+      address: "0xE2fCd9cef7e8107637F3e08Fc943f6d863e4Ee88"
+      abi: LucieToken
+      startBlock: 8585294
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - ApprovalForAll
+        - BatchMetadataUpdate
+        - MetadataUpdate
+        - OwnershipTransferred
+        - SellOfferPlaced
+        - TokenBuyed
+        - TokenMinted
+        - Transfer
+      abis:
+        - name: LucieToken
+          file: ./abis/LucieToken.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,indexed uint256)
+          handler: handleApproval
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
+        - event: BatchMetadataUpdate(uint256,uint256)
+          handler: handleBatchMetadataUpdate
+        - event: MetadataUpdate(uint256)
+          handler: handleMetadataUpdate
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: SellOfferPlaced(address,indexed uint256,uint256,uint256,string)
+          handler: handleSellOfferPlaced
+        - event: TokenBuyed(address,address,indexed uint256,uint256,uint256,string)
+          handler: handleTokenBuyed
+        - event: TokenMinted(address,indexed uint256,uint256,uint256,string)
+          handler: handleTokenMinted
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: ./src/lucie-token.ts

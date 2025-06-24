@@ -1,0 +1,8 @@
+{
+  "sepolia": {
+    "LucieToken": {
+      "address": "0xE2fCd9cef7e8107637F3e08Fc943f6d863e4Ee88",
+      "startBlock": 8585294
+    }
+  }
+}
