@@ -51,12 +51,15 @@ contract LucieTokenV1 is
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function initialize() public initializer {
+        __LucieTokenV1_init();
+        mintPrice = 100_000 gwei;
+    }
+
+    function __LucieTokenV1_init() internal onlyInitializing {
+        __Ownable_init(msg.sender);
         __ERC721_init("LucieToken", "LT");
         __ERC721URIStorage_init();
-        __Ownable_init(msg.sender);
         __UUPSUpgradeable_init();
-
-        mintPrice = 100_000 gwei;
     }
 
     function safeMint(
@@ -77,7 +80,7 @@ contract LucieTokenV1 is
         address to,
         uint256 tokenId,
         bytes memory data
-    ) public override(ERC721Upgradeable, IERC721) {
+    ) public virtual override(ERC721Upgradeable, IERC721) {
         sellOfferBook[tokenId] = 0;
         super.safeTransferFrom(from, to, tokenId, data);
     }
@@ -86,7 +89,7 @@ contract LucieTokenV1 is
         address from,
         address to,
         uint256 tokenId
-    ) public override(ERC721Upgradeable, IERC721) {
+    ) public virtual override(ERC721Upgradeable, IERC721) {
         sellOfferBook[tokenId] = 0;
         super.transferFrom(from, to, tokenId);
     }
@@ -149,6 +152,7 @@ contract LucieTokenV1 is
     )
         public
         view
+        virtual
         override(ERC721Upgradeable, ERC721URIStorageUpgradeable)
         returns (string memory)
     {
@@ -160,6 +164,7 @@ contract LucieTokenV1 is
     )
         public
         view
+        virtual
         override(ERC721Upgradeable, ERC721URIStorageUpgradeable)
         returns (bool)
     {
