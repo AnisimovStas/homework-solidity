@@ -4,6 +4,7 @@ import "@nomiclabs/hardhat-solhint";
 import "@openzeppelin/hardhat-upgrades"
 import "@nomicfoundation/hardhat-verify";
 import "hardhat-tracer";
+import "@openzeppelin/hardhat-upgrades";
 
 import * as dotenv from "dotenv";
 

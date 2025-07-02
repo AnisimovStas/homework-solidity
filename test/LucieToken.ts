@@ -4,7 +4,7 @@ import { expect } from "chai";
 import { getAccountBalance, setAccountBalance } from "./utils";
 
 
-describe.only("LucieToken", () => {
+describe("LucieToken", () => {
 
     async function deployLucieTokenContractFixture() {
         const [owner, user] = await hre.ethers.getSigners();
