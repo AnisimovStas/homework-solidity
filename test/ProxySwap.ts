@@ -42,7 +42,7 @@ describe.only("ProxySwap", () => {
         const profitBefore = await proxySwap.connect(owner).getProfit(WETH.getAddress());
 
 
-        // Готов отдать хоть 3000$, хочу получить минимум 1 ETH на выходе
+        // Даю 3000$, хочу получить минимум 1 ETH на выходе
         const amountOutMin = ethers.parseEther("1");
         const amountIn = ethers.parseUnits("3000", 6);
 
@@ -53,6 +53,7 @@ describe.only("ProxySwap", () => {
         const event = recipient.logs
             .find(log => log?.fragment?.name === 'swapExactInputExecuted');
         const swapFee = event?.args[6];
+        const actualAmountOut = event?.args[5];
 
         const WETHbalanceAfter = await WETH.balanceOf(whale.address);
         const USDCbalanceAfter = await USDC.balanceOf(whale.address);
@@ -60,6 +61,10 @@ describe.only("ProxySwap", () => {
 
 
         expect(WETHbalanceBefore + ethers.parseEther("1") < WETHbalanceAfter);
+
+        // тк ETH ~2500$, а закидываю 3000$, ожидаю получить больше 1.1 ETH
+        expect(actualAmountOut).greaterThanOrEqual(ethers.parseEther("1.1"));
+
         expect(USDCbalanceBefore > USDCbalanceAfter);
         expect(profitBefore + swapFee).eqls(profitAfter)
 
