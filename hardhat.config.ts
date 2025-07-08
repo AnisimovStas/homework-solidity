@@ -12,6 +12,7 @@ dotenv.config();
 
 const config: HardhatUserConfig = {
     solidity: "0.8.28",
+
     gasReporter: {
         enabled: true,
     },
@@ -23,7 +24,14 @@ const config: HardhatUserConfig = {
         SepoliaAsEve: {
             url: process.env.SEPOLIA_URL || "",
             accounts: process.env.EVE_PRIVATE_KEY ? [process.env.EVE_PRIVATE_KEY] : [],
-        }
+        },
+        hardhat: {
+            forking: {
+                url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` || "",
+                blockNumber: 22839956
+            },
+            initialBaseFeePerGas: 0
+        },
     },
     etherscan: {
         // Your API key for Etherscan
