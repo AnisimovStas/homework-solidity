@@ -13,11 +13,9 @@ contract ProxySwap is Ownable {
     // валидирует, что адреса действительно IERC20
     // 98% в uniswap, 2% оставляет у себя
     ISwapRouter02 private constant router = ISwapRouter02(SWAP_ROUTER_02);
-    uint8 private proxyFee = 2;
-    mapping(address => uint) private profit;
+    uint16 private proxyFee = 200;
     error notIERC20Token();
     error notEnoughFounds();
-    error poolNotExist(address tokenIn, address tokenOut);
     error slippageTooHigh();
     event swapExactInputExecuted(
         address indexed to,
@@ -45,16 +43,10 @@ contract ProxySwap is Ownable {
         address tokenInAddress,
         uint256 amountIn,
         address tokenOutAddress,
-        uint256 amountOutMin
+        uint256 amountOutMin,
+        uint24 poolFee
     ) external {
-        require(
-            isIERC20(tokenInAddress) && isIERC20(tokenOutAddress),
-            notIERC20Token()
-        );
         require(amountIn != 0 && amountOutMin != 0, notEnoughFounds());
-
-        uint24 fee = uniswapFeeResolver(tokenInAddress, tokenOutAddress);
-        require(fee != 0, poolNotExist(tokenInAddress, tokenOutAddress));
 
         IERC20(tokenInAddress).transferFrom(
             msg.sender,
@@ -67,7 +59,7 @@ contract ProxySwap is Ownable {
             .ExactInputSingleParams({
                 tokenIn: tokenInAddress,
                 tokenOut: tokenOutAddress,
-                fee: fee,
+                fee: poolFee,
                 recipient: address(this),
                 amountIn: amountIn,
                 amountOutMinimum: amountOutMin,
@@ -76,11 +68,10 @@ contract ProxySwap is Ownable {
         uint256 amountOut = router.exactInputSingle(params);
         require(amountOut >= amountOutMin, slippageTooHigh());
 
-        uint256 swapFee = (amountOut * proxyFee) / 100;
+        uint256 swapFee = ((amountOut * proxyFee) / 100) / 100;
 
         uint256 amountOutAdjustedByFee = amountOut - swapFee;
 
-        profit[tokenOutAddress] += swapFee;
         IERC20(tokenOutAddress).transfer(msg.sender, amountOutAdjustedByFee);
         emit swapExactInputExecuted(
             msg.sender,
@@ -97,16 +88,10 @@ contract ProxySwap is Ownable {
         address tokenInAddress,
         uint256 amountInMax,
         address tokenOutAddress,
-        uint256 amountOut
+        uint256 amountOut,
+        uint24 poolFee
     ) external {
-        require(
-            isIERC20(tokenInAddress) && isIERC20(tokenOutAddress),
-            notIERC20Token()
-        );
         require(amountInMax != 0 && amountOut != 0, notEnoughFounds());
-
-        uint24 fee = uniswapFeeResolver(tokenInAddress, tokenOutAddress);
-        require(fee != 0, poolNotExist(tokenInAddress, tokenOutAddress));
 
         IERC20(tokenInAddress).transferFrom(
             msg.sender,
@@ -119,7 +104,7 @@ contract ProxySwap is Ownable {
             .ExactOutputSingleParams({
                 tokenIn: tokenInAddress,
                 tokenOut: tokenOutAddress,
-                fee: fee,
+                fee: poolFee,
                 recipient: address(this),
                 amountOut: amountOut,
                 amountInMaximum: amountInMax,
@@ -128,11 +113,12 @@ contract ProxySwap is Ownable {
 
         uint256 amountIn = router.exactOutputSingle(params);
 
-        uint amountInAdjustmentByFee = amountIn + (amountIn * proxyFee) / 100;
+        uint amountInAdjustmentByFee = amountIn +
+            ((amountIn * proxyFee) / 100) /
+            100;
 
         require(amountInAdjustmentByFee <= amountInMax, notEnoughFounds());
         uint256 swapFee = amountInAdjustmentByFee - amountIn;
-        profit[tokenInAddress] += swapFee;
 
         IERC20(tokenOutAddress).transfer(msg.sender, amountOut);
 
@@ -163,55 +149,17 @@ contract ProxySwap is Ownable {
         );
     }
 
-    function getProxyFee() external view returns (uint8) {
+    function getProxyFee() external view returns (uint16) {
         return proxyFee;
     }
 
-    function setProxyFee(uint8 newFee) public onlyOwner {
+    function setProxyFee(uint16 newFee) public onlyOwner {
         proxyFee = newFee;
     }
 
-    function getProfit(
-        address tokenAddress
-    ) external view onlyOwner returns (uint256) {
-        return profit[tokenAddress];
-    }
-
     function withdrawProfit(address tokenToWithdraw) external onlyOwner {
-        uint256 amount = profit[tokenToWithdraw];
-        profit[tokenToWithdraw] = 0;
-
+        uint256 amount = IERC20(tokenToWithdraw).balanceOf(address(this));
         IERC20(tokenToWithdraw).transfer(owner(), amount);
-    }
-
-    function isIERC20(address token) public view returns (bool) {
-        try IERC20(token).totalSupply() returns (uint256) {
-            return true;
-        } catch {
-            return false;
-        }
-    }
-
-    function uniswapFeeResolver(
-        address tokenIn,
-        address tokenOut
-    ) private view returns (uint24) {
-        uint24[] memory fees = new uint24[](3);
-        fees[0] = 500;
-        fees[1] = 3000;
-        fees[2] = 10000;
-
-        for (uint i = 0; i < fees.length; ++i) {
-            address pool = IUniswapV3Factory(UniswapV3Factory).getPool(
-                tokenIn,
-                tokenOut,
-                fees[i]
-            );
-            if (pool != address(0)) {
-                return fees[i];
-            }
-        }
-        return 0;
     }
 }
 

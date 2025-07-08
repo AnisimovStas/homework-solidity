@@ -10,7 +10,7 @@ describe.only("ProxySwap", () => {
 
     const WETH_ADDRESS = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
     const USDC_ADDRESS = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
-
+    const poolFee = 500;
 
     async function deployProxySwapContractFixture() {
         const [owner] = await hre.ethers.getSigners();
@@ -33,13 +33,13 @@ describe.only("ProxySwap", () => {
         const { proxySwap } = await loadFixture(deployProxySwapContractFixture);
 
         expect(proxySwap.getAddress).exist
-        expect(await proxySwap.getProxyFee()).equal("2")
+        expect(await proxySwap.getProxyFee()).equal("200")
     })
     it("should swapExactInput", async () => {
         const { proxySwap, owner, whale, WETH, USDC } = await loadFixture(deployProxySwapContractFixture);
         const WETHbalanceBefore = await WETH.balanceOf(whale.address);
         const USDCbalanceBefore = await USDC.balanceOf(whale.address);
-        const profitBefore = await proxySwap.connect(owner).getProfit(WETH.getAddress());
+        const profitBefore = await WETH.balanceOf(proxySwap.getAddress());
 
 
         // Даю 3000$, хочу получить минимум 1 ETH на выходе
@@ -47,7 +47,7 @@ describe.only("ProxySwap", () => {
         const amountIn = ethers.parseUnits("3000", 6);
 
         await USDC.connect(whale).approve(proxySwap.getAddress(), amountIn);
-        const tx = await proxySwap.connect(whale).swapExactInput(USDC.getAddress(), amountIn, WETH.getAddress(), amountOutMin);
+        const tx = await proxySwap.connect(whale).swapExactInput(USDC.getAddress(), amountIn, WETH.getAddress(), amountOutMin, poolFee);
 
         const recipient = await tx.wait();
         const event = recipient.logs
@@ -57,7 +57,7 @@ describe.only("ProxySwap", () => {
 
         const WETHbalanceAfter = await WETH.balanceOf(whale.address);
         const USDCbalanceAfter = await USDC.balanceOf(whale.address);
-        const profitAfter = await proxySwap.connect(owner).getProfit(WETH.getAddress());
+        const profitAfter = await WETH.balanceOf(proxySwap.getAddress());
 
 
         expect(WETHbalanceBefore + ethers.parseEther("1") < WETHbalanceAfter);
@@ -79,17 +79,18 @@ describe.only("ProxySwap", () => {
         const amountInMax = ethers.parseEther("1"); // но больше 1 ETH не отдам
         const amountOut = ethers.parseUnits("2000", 6);
 
-        const profitBefore = await proxySwap.connect(owner).getProfit(WETH.getAddress());
+        const profitBefore = await WETH.balanceOf(proxySwap.getAddress());
 
         await WETH.connect(whale).approve(proxySwap.getAddress(), amountInMax);
         const tx = await proxySwap.connect(whale).swapExactOutput(
             WETH.getAddress(),
             amountInMax,
             USDC.getAddress(),
-            amountOut
+            amountOut,
+            poolFee
         );
         const receipt = await tx.wait();
-        const profitAfter = await proxySwap.connect(owner).getProfit(WETH.getAddress());
+        const profitAfter = await WETH.balanceOf(proxySwap.getAddress());
 
         const event = receipt.logs
             .find(log => log?.fragment?.name === 'swapExactOutputExecuted');
