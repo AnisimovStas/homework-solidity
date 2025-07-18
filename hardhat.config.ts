@@ -14,7 +14,7 @@ const config: HardhatUserConfig = {
     solidity: "0.8.28",
 
     gasReporter: {
-        enabled: true,
+        enabled: false,
     },
     networks: {
         Sepolia: {
