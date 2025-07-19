@@ -10,12 +10,18 @@ contract TradableNFT is ERC721 {
     uint256 counter;
     AggregatorV3Interface internal priceFeed;
 
-    address internal usdcAddress = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+    address internal usdcAddress;
 
-    constructor(address aggregatorAddress) ERC721("NFToken", "NFT") {
+    constructor(
+        address aggregatorAddress,
+        address _usdcAddress
+    ) ERC721("NFToken", "NFT") {
         // ETH / USD Sepolia (ETH/USDC нет на тестнете)
         //0x694AA1769357215DE4FAC081bf1f309aDC325306
         priceFeed = AggregatorV3Interface(aggregatorAddress);
+
+        // DI local test / testnet / mainnet
+        usdcAddress = _usdcAddress;
     }
 
     event newRefound(address to, uint256 amount);

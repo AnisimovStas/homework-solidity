@@ -4,7 +4,7 @@ import { ContractTransactionReceipt } from "ethers/lib.commonjs/contract/wrapper
 import { IERC20 } from "../../typechain-types";
 import hre, { ethers } from "hardhat";
 
-describe.only("TradableNFT", () => {
+describe("TradableNFT", () => {
 
     const USDC_ADDRESS = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
     const GNO_ADDRESS = '0x6810e776880C02933D47DB1b9fc05908e5386b96';
@@ -18,7 +18,7 @@ describe.only("TradableNFT", () => {
         const mockAggregator = await MockAggregator.deploy();
 
         const TradableNFT = await hre.ethers.getContractFactory("TradableNFT");
-        const tradableNFT = await TradableNFT.deploy(await mockAggregator.getAddress());
+        const tradableNFT = await TradableNFT.deploy(await mockAggregator.getAddress(), USDC_ADDRESS);
         const USDC = await ethers.getContractAt("IERC20", USDC_ADDRESS);
         const GNO = await ethers.getContractAt("IERC20", GNO_ADDRESS);
 
