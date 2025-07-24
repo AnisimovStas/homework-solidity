@@ -13,10 +13,33 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const config: HardhatUserConfig = {
-    solidity: "0.8.28",
+    solidity: {
+        compilers: [
+            {
+                version: "0.8.26", // твой основной контракт
+                settings: {
+                    viaIR: true, // 💡 обязательная опция
+                    optimizer: {
+                        enabled: true,
+                        runs: 200,
+                    },
+                },
+            },
+            {
+                version: "0.8.19",
+                settings: {
+                    viaIR: true, // 💡 обязательная опция
+                    optimizer: {
+                        enabled: true,
+                        runs: 200,
+                    },
+                },
+            },
+        ],
+    },
 
     gasReporter: {
-        enabled: true,
+        enabled: false,
     },
     networks: {
         Sepolia: {
