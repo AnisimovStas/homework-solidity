@@ -111,10 +111,7 @@ describe.only("Raffle", () => {
         const participators = await raffle.getParticipators();
 
         expect(participators[0]).to.be.equals(user3.address);
-        expect(participators[1]).to.be.equals(ethers.ZeroAddress);
-        expect(participators[2]).to.be.equals(ethers.ZeroAddress);
-        expect(participators[3]).to.be.equals(ethers.ZeroAddress);
-        expect(participators[4]).to.be.equals(ethers.ZeroAddress);
+        expect(participators.length).to.be.equals(1);
 
     })
 

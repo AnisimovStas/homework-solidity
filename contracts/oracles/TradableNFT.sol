@@ -9,6 +9,7 @@ import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 contract TradableNFT is ERC721 {
     uint256 counter;
     AggregatorV3Interface internal priceFeed;
+    uint256 private constant NFTPrice = 10 * 10 ** 6;
 
     address internal usdcAddress;
 
@@ -28,11 +29,7 @@ contract TradableNFT is ERC721 {
     error NotEnoughFounds();
 
     function buy() external {
-        IERC20(usdcAddress).transferFrom(
-            msg.sender,
-            address(this),
-            10 * 10 ** 6
-        );
+        IERC20(usdcAddress).transferFrom(msg.sender, address(this), NFTPrice);
 
         _safeMint(msg.sender, counter);
         counter++;

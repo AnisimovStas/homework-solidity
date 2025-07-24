@@ -5,8 +5,7 @@ import {VRFConsumerBaseV2Plus} from "@chainlink/contracts/src/v0.8/vrf/dev/VRFCo
 import {VRFV2PlusClient} from "@chainlink/contracts/src/v0.8/vrf/dev/libraries/VRFV2PlusClient.sol";
 
 contract Raffle is VRFConsumerBaseV2Plus {
-    address[5] public participators;
-    uint8 participatorCounter;
+    address[] public participators;
     uint256 public participatePrice = 0.001 ether;
     uint8 constant participatorsCapacity = 5;
     bool raffleInProgress;
@@ -43,9 +42,8 @@ contract Raffle is VRFConsumerBaseV2Plus {
     function participate() external payable {
         require(!raffleInProgress, RaffleInProgress());
         require(msg.value >= participatePrice, NotEnoughFounds());
+        participators.push(msg.sender);
 
-        participators[participatorCounter] = msg.sender;
-        participatorCounter++;
         emit NewParticipant(msg.sender);
 
         uint256 refundAmount = msg.value - participatePrice;
@@ -55,12 +53,12 @@ contract Raffle is VRFConsumerBaseV2Plus {
             emit NewRefund(msg.sender, refundAmount);
         }
 
-        if (participatorCounter == participatorsCapacity) {
+        if (participators.length == participatorsCapacity) {
             startRaffle();
         }
     }
 
-    function getParticipators() public view returns (address[5] memory) {
+    function getParticipators() public view returns (address[] memory) {
         return participators;
     }
 
@@ -105,10 +103,8 @@ contract Raffle is VRFConsumerBaseV2Plus {
     }
 
     function resetRaffle() internal {
-        participatorCounter = 0;
-        for (uint i = 0; i < participators.length; i++) {
-            participators[i] = address(0);
-        }
+        participators = new address[](0);
+
         raffleInProgress = false;
     }
 }
