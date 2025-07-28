@@ -5,7 +5,6 @@ import "@openzeppelin/hardhat-upgrades"
 import "@nomicfoundation/hardhat-verify";
 import "hardhat-tracer";
 import "@openzeppelin/hardhat-upgrades";
-import "hardhat-storage-layout";
 
 
 import * as dotenv from "dotenv";

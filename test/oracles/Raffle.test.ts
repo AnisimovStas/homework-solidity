@@ -2,7 +2,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
 import { IERC20 } from "../../typechain-types";
 import hre, { ethers } from "hardhat";
-describe.only("Raffle", () => {
+describe("Raffle", () => {
 
 
     const useradr1 = '0x57757E3D981446D585Af0D9Ae4d7DF6D64647806';
